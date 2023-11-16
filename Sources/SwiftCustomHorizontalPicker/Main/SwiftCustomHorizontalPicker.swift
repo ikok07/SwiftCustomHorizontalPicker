@@ -4,6 +4,8 @@
 import SwiftUI
 import Observation
 
+/// Notice:
+/// The minVal and maxVal should be divided by 5 in order for the picker to work correctly.
 @available(iOS 17.0.0, *)
 public struct CustomHorizontalPicker: View {
     
@@ -11,12 +13,16 @@ public struct CustomHorizontalPicker: View {
     var viewModel = ViewModel()
     
     // MARK: - Internal
+    @State private var majorStopsCount: Double = 0
     @State private var scrollPosition: Double?
+    @State private var initialised: Bool = false
+    @State private var initialOffset: Double = 0
+    @State private var maxOffset: Double = 0
     
     // MARK: - Initial info
-    @Binding public var value: Double?
-    public let minVal: Double
-    public let maxVal: Double
+    @Binding public var value: Int?
+    public let minVal: Int
+    public let maxVal: Int
     
     // MARK: - Picker
     public var pickerColor: Color = .accentColor
@@ -30,15 +36,16 @@ public struct CustomHorizontalPicker: View {
     
     public var body: some View {
         ZStack {
+//            Text("\((value ?? 0))")
             GeometryReader { geometry in
                 ScrollView(.horizontal) {
                     HStack(spacing: 0) {
-                        ForEach(0..<viewModel.calculateMajorStopsCount(), id: \.self) { index in
+                        ForEach(0..<Int(majorStopsCount), id: \.self) { index in
                             PickerStopView(color: self.stopsColor, width: self.stopsWidth)
                                 .frame(width: 20)
                                 .offset(x: -10)
-                                
                             
+
                             ForEach(0..<4, id: \.self) { i in
                                 PickerMiniStopView(color: self.miniStopsColor, width: self.miniStopsWidth)
                                     .frame(width: 20)
@@ -54,15 +61,33 @@ public struct CustomHorizontalPicker: View {
                             .fill(.clear)
                             .frame(width: geometry.size.width - 20, height: geometry.size.height)
                     }
+                    .background(GeometryReader {
+                        Color.clear.preference(key: ViewOffsetKey.self,
+                            value: -$0.frame(in: .named("scroll")).origin.x)
+                    })
+                    .onPreferenceChange(ViewOffsetKey.self) { 
+                        if initialised {
+                            if $0 > self.initialOffset && $0 < self.maxOffset {
+                                self.value = Int(viewModel.calculateValue(initialOffset: self.initialOffset, offset: $0, minVal: self.minVal))
+                            } else if $0 <= self.initialOffset {
+                                self.value = minVal
+                            } else {
+                                self.value = maxVal
+                            }
+                        } else {
+                            self.initialOffset = $0
+                            initialised = true
+                        }
+                    }
                     .scrollTargetLayout()
                     .offset(x: geometry.size.width / 2)
                 }
+                .coordinateSpace(name: "scroll")
                 .scrollIndicators(.hidden)
                 .scrollTargetBehavior(.viewAligned)
-                .scrollPosition(id: $value)
                 .onAppear {
-                    viewModel.minVal = minVal
-                    viewModel.maxVal = maxVal
+                    self.majorStopsCount = viewModel.calculateMajorStopsCount(minVal: self.minVal, maxVal: self.maxVal)
+                    self.maxOffset = ((majorStopsCount - 10) + (majorStopsCount * 4)) * 20
                 }
             }
         }
@@ -72,8 +97,16 @@ public struct CustomHorizontalPicker: View {
     }
 }
 
+struct ViewOffsetKey: PreferenceKey {
+    typealias Value = CGFloat
+    static var defaultValue = CGFloat.zero
+    static func reduce(value: inout Value, nextValue: () -> Value) {
+        value += nextValue()
+    }
+}
+
 @available(iOS 17.0.0, *)
 #Preview {
-    CustomHorizontalPicker(value: .constant(20), minVal: 0, maxVal: 100)
+    CustomHorizontalPicker(value: .constant(25), minVal: 0, maxVal: 5)
         .frame(height: 40)
 }

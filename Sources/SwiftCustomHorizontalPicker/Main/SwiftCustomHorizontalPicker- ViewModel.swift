@@ -11,16 +11,13 @@ import Observation
 @available(iOS 17.0.0, *)
 extension CustomHorizontalPicker {
     @Observable class ViewModel {
-        
-        var minVal: Double = 0
-        var maxVal: Double = 0
-        
-        var spaceBetweenStops: Double = 20
-        
-        func calculateMajorStopsCount() -> Int {
-            let count = (maxVal - minVal) / 4
-            return Int(count)
+        func calculateMajorStopsCount(minVal: Int, maxVal: Int) -> Double {
+            let count: Double = Double(maxVal - minVal) / 5
+            return count
         }
         
+        func calculateValue(initialOffset: Double, offset: Double, minVal: Int) -> Double {
+            return (abs((initialOffset + (-offset)) / 20) + Double(minVal))
+        }
     }
 }

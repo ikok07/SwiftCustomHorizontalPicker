@@ -10,11 +10,14 @@ import SwiftUI
 @available(iOS 17.0.0, *)
 struct TestView: View {
     
-    @State private var value: Double? = 0
+    @State private var value: Int?
     
     var body: some View {
         VStack {
             Text("\(value ?? 0)")
+                .font(.title)
+                .fontWeight(.bold)
+                .padding(.bottom)
             
             CustomHorizontalPicker(value: $value, minVal: 0, maxVal: 100)
                 .frame(height: 40)
