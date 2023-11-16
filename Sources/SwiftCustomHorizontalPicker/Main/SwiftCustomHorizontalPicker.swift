@@ -28,7 +28,13 @@ public struct CustomHorizontalPicker: View {
     @Binding public var value: Int?
     public let minVal: Int
     public let maxVal: Int
-    public let startValue: Int
+    /** Sets the start value at a specified offset from minVal.*/
+    /// - Example:
+    /// If you want to start with number 12
+    /// ```swift
+    /// CustomHorizontalPicker(value: $value, minVal: 10, maxVal: 100, startValueOffset: 2)
+    /// ```
+    public let startValueOffset: Int
     
     // MARK: - Picker
     public var pickerColor: Color = .accentColor
@@ -44,7 +50,7 @@ public struct CustomHorizontalPicker: View {
         self._value = value
         self.minVal = minVal
         self.maxVal = maxVal
-        self.startValue = startValue
+        self.startValueOffset = startValue
     }
     
     public var body: some View {
@@ -105,7 +111,7 @@ public struct CustomHorizontalPicker: View {
                 }
                 .introspect(.scrollView, on: .iOS(.v17)) { scrollView in
                     if !self.scrolledToStart {
-                        scrollView.contentOffset.x = CGFloat(startValue * 20)
+                        scrollView.contentOffset.x = CGFloat(startValueOffset * 20)
                         self.scrolledToStart = true
                     }
                 }
