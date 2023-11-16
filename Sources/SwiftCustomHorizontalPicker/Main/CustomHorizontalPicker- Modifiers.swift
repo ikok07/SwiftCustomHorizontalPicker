@@ -8,7 +8,7 @@
 import SwiftUI
 
 @available(iOS 17.0.0, *)
-extension CustomHorizontalPicker {
+public extension CustomHorizontalPicker {
     
     func modifyStops(color: Color = .gray.opacity(0.7), width: CGFloat = 3) -> CustomHorizontalPicker {
         var view = self

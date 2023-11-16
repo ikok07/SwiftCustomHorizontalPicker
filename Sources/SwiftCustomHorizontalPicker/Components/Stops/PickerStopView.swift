@@ -8,12 +8,12 @@
 import SwiftUI
 
 @available(iOS 17.0.0, *)
-struct PickerStopView: View {
+public struct PickerStopView: View {
     
-    let color: Color
-    let width: CGFloat
+    public let color: Color
+    public let width: CGFloat
     
-    var body: some View {
+    public var body: some View {
         GeometryReader { geometry in
             Rectangle()
                 .fill(color)

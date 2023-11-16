@@ -35,8 +35,8 @@ public struct CustomHorizontalPicker: View {
     public var miniStopsColor: Color = .gray.opacity(0.7)
     public var miniStopsWidth: CGFloat = 2
     
-    public init(value: Int? = nil, minVal: Int, maxVal: Int) {
-        self.value = value
+    public init(value: Binding<Int?>, minVal: Int, maxVal: Int) {
+        self._value = value
         self.minVal = minVal
         self.maxVal = maxVal
     }
@@ -108,10 +108,10 @@ public struct CustomHorizontalPicker: View {
     }
 }
 
-struct ViewOffsetKey: PreferenceKey {
-    typealias Value = CGFloat
-    static var defaultValue = CGFloat.zero
-    static func reduce(value: inout Value, nextValue: () -> Value) {
+public struct ViewOffsetKey: PreferenceKey {
+    public typealias Value = CGFloat
+    public static var defaultValue = CGFloat.zero
+    public static func reduce(value: inout Value, nextValue: () -> Value) {
         value += nextValue()
     }
 }
