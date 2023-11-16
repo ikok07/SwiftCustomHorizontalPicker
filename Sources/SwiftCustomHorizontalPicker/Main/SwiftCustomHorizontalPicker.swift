@@ -28,12 +28,7 @@ public struct CustomHorizontalPicker: View {
     @Binding public var value: Int?
     public let minVal: Int
     public let maxVal: Int
-    /** Sets the start value at a specified offset from minVal.*/
-    /// - Example:
-    /// If you want to start with number 12
-    /// ```swift
-    /// CustomHorizontalPicker(value: $value, minVal: 10, maxVal: 100, startValueOffset: 2)
-    /// ```
+
     public let startValueOffset: Int
     
     // MARK: - Picker
@@ -46,11 +41,16 @@ public struct CustomHorizontalPicker: View {
     public var miniStopsColor: Color = .gray.opacity(0.7)
     public var miniStopsWidth: CGFloat = 2
     
-    public init(value: Binding<Int?>, minVal: Int, maxVal: Int, startValue: Int = 0) {
+    /// - Example:
+    /// If you want to start with number 12
+    /// ```swift
+    /// CustomHorizontalPicker(value: $value, minVal: 10, maxVal: 100, startValueOffset: 2)
+    /// ```
+    public init(value: Binding<Int?>, minVal: Int, maxVal: Int, startValueOffset: Int = 0) {
         self._value = value
         self.minVal = minVal
         self.maxVal = maxVal
-        self.startValueOffset = startValue
+        self.startValueOffset = startValueOffset
     }
     
     public var body: some View {
