@@ -23,6 +23,7 @@ public struct CustomHorizontalPicker: View {
     @Binding public var value: Int?
     public let minVal: Int
     public let maxVal: Int
+    public let startValue: Int = 0
     
     // MARK: - Picker
     public var pickerColor: Color = .accentColor
@@ -34,6 +35,12 @@ public struct CustomHorizontalPicker: View {
     public var miniStopsColor: Color = .gray.opacity(0.7)
     public var miniStopsWidth: CGFloat = 2
     
+    public init(value: Int? = nil, minVal: Int, maxVal: Int) {
+        self.value = value
+        self.minVal = minVal
+        self.maxVal = maxVal
+    }
+    
     public var body: some View {
         ZStack {
 //            Text("\((value ?? 0))")
@@ -41,31 +48,35 @@ public struct CustomHorizontalPicker: View {
                 ScrollView(.horizontal) {
                     HStack(spacing: 0) {
                         ForEach(0..<Int(majorStopsCount), id: \.self) { index in
-                            PickerStopView(color: self.stopsColor, width: self.stopsWidth)
-                                .frame(width: 20)
-                                .offset(x: -10)
-                            
-
-                            ForEach(0..<4, id: \.self) { i in
-                                PickerMiniStopView(color: self.miniStopsColor, width: self.miniStopsWidth)
-                                    .frame(width: 20)
-                                    .offset(x: -10)
-                            }
+                                    PickerStopView(color: self.stopsColor, width: self.stopsWidth)
+                                        .frame(width: 20)
+                                        .offset(x: -10)
+                                        .id(index * 5)
+    
+    
+                                    ForEach(0..<4, id: \.self) { i in
+                                        PickerMiniStopView(color: self.miniStopsColor, width: self.miniStopsWidth)
+                                            .frame(width: 20)
+                                            .offset(x: -10)
+                                            .id(i)
+                                    }
                         }
                         
-                        PickerStopView(color: self.stopsColor, width: self.stopsWidth)
-                            .frame(width: 20)
-                            .offset(x: -10)
-                        
-                        Rectangle()
-                            .fill(.clear)
-                            .frame(width: geometry.size.width - 20, height: geometry.size.height)
+                                PickerStopView(color: self.stopsColor, width: self.stopsWidth)
+                                    .frame(width: 20)
+                                    .offset(x: -10)
+                                    .id(maxVal)
+    
+                                Rectangle()
+                                    .fill(.clear)
+                                    .frame(width: geometry.size.width - 20, height: geometry.size.height)
+                                    .id(maxVal + 1)
                     }
                     .background(GeometryReader {
                         Color.clear.preference(key: ViewOffsetKey.self,
                             value: -$0.frame(in: .named("scroll")).origin.x)
                     })
-                    .onPreferenceChange(ViewOffsetKey.self) { 
+                    .onPreferenceChange(ViewOffsetKey.self) {
                         if initialised {
                             if $0 > self.initialOffset && $0 < self.maxOffset {
                                 self.value = Int(viewModel.calculateValue(initialOffset: self.initialOffset, offset: $0, minVal: self.minVal))
@@ -107,6 +118,6 @@ struct ViewOffsetKey: PreferenceKey {
 
 @available(iOS 17.0.0, *)
 #Preview {
-    CustomHorizontalPicker(value: .constant(25), minVal: 0, maxVal: 5)
+    CustomHorizontalPicker(value: .constant(25), minVal: 0, maxVal: 100)
         .frame(height: 40)
 }
