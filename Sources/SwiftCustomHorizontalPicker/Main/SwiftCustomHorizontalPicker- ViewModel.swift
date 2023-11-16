@@ -16,8 +16,14 @@ public extension CustomHorizontalPicker {
             return count
         }
         
-        public func calculateValue(initialOffset: Double, offset: Double, minVal: Int) -> Double {
-            return (abs((initialOffset + (-offset)) / 20) + Double(minVal))
+        public func calculateValue(initialOffset: Double, offset: Double, minVal: Int, spacing: CGFloat) -> Double {
+            return (abs((initialOffset + (-offset)) / spacing) + Double(minVal))
+        }
+        
+        public func calculateSpacingCoeff(spacing: CGFloat) -> Double {
+            let difference = (spacing - 20) / 10
+            let coeff = 10 - (difference * 5)
+            return coeff
         }
     }
 }

@@ -31,6 +31,9 @@ public struct CustomHorizontalPicker: View {
 
     public let startValueOffset: Int
     
+    // MARK: - Spacing
+    public var spacing: CGFloat = 20
+    
     // MARK: - Picker
     public var pickerColor: Color = .accentColor
     public var pickerWidth: CGFloat = 3
@@ -56,37 +59,29 @@ public struct CustomHorizontalPicker: View {
     public var body: some View {
         ZStack {
 //            Text("\((value ?? 0))")
-//            Button("Scroll") {
-//                scrollPosition = 7
-//            }
-//            .zIndex(2)
             GeometryReader { geometry in
                 ScrollView(.horizontal) {
                     HStack(spacing: 0) {
                         ForEach(0..<Int(majorStopsCount), id: \.self) { index in
                                     PickerStopView(color: self.stopsColor, width: self.stopsWidth)
-                                        .frame(width: 20)
-                                        .offset(x: -10)
-                                        .id(index * 5)
+                                        .frame(width: self.spacing)
+                                        .offset(x: -(self.spacing / 2))
     
     
                                     ForEach(0..<4, id: \.self) { i in
                                         PickerMiniStopView(color: self.miniStopsColor, width: self.miniStopsWidth)
-                                            .frame(width: 20)
-                                            .offset(x: -10)
-                                            .id(i)
+                                            .frame(width: self.spacing)
+                                            .offset(x: -(self.spacing / 2))
                                     }
                         }
                         
                         PickerStopView(color: self.stopsColor, width: self.stopsWidth)
-                            .frame(width: 20)
-                            .offset(x: -10)
-                            .id(maxVal)
+                            .frame(width: self.spacing)
+                            .offset(x: -(self.spacing / 2))
 
                         Rectangle()
                             .fill(.clear)
-                            .frame(width: geometry.size.width - 20, height: geometry.size.height)
-                            .id(maxVal + 1)
+                            .frame(width: geometry.size.width - self.spacing, height: geometry.size.height)
                     }
                     .background(GeometryReader {
                         Color.clear.preference(key: ViewOffsetKey.self,
@@ -95,7 +90,7 @@ public struct CustomHorizontalPicker: View {
                     .onPreferenceChange(ViewOffsetKey.self) {
                         if initialised {
                             if $0 > self.initialOffset && $0 < self.maxOffset {
-                                self.value = Int(viewModel.calculateValue(initialOffset: self.initialOffset, offset: $0, minVal: self.minVal))
+                                self.value = Int(viewModel.calculateValue(initialOffset: self.initialOffset, offset: $0, minVal: self.minVal, spacing: self.spacing))
                             } else if $0 <= self.initialOffset {
                                 self.value = minVal
                             } else {
@@ -111,7 +106,7 @@ public struct CustomHorizontalPicker: View {
                 }
                 .introspect(.scrollView, on: .iOS(.v17)) { scrollView in
                     if !self.scrolledToStart {
-                        scrollView.contentOffset.x = CGFloat(startValueOffset * 20)
+                        scrollView.contentOffset.x = CGFloat(CGFloat(startValueOffset) * self.spacing)
                         self.scrolledToStart = true
                     }
                 }
@@ -121,7 +116,7 @@ public struct CustomHorizontalPicker: View {
                 .scrollPosition(id: $scrollPosition, anchor: .center)
                 .onAppear {
                     self.majorStopsCount = viewModel.calculateMajorStopsCount(minVal: self.minVal, maxVal: self.maxVal)
-                    self.maxOffset = ((majorStopsCount - 10) + (majorStopsCount * 4)) * 20
+                    self.maxOffset = ((majorStopsCount - (viewModel.calculateSpacingCoeff(spacing: self.spacing))) + (majorStopsCount * 4)) * self.spacing
                 }
             }
         }

@@ -10,6 +10,12 @@ import SwiftUI
 @available(iOS 17.0.0, *)
 public extension CustomHorizontalPicker {
     
+    func modifyStopSpacing(_ value: CGFloat) -> CustomHorizontalPicker {
+        var view = self
+        view.spacing = value
+        return view
+    }
+    
     func modifyStops(color: Color = .gray.opacity(0.7), width: CGFloat = 3) -> CustomHorizontalPicker {
         var view = self
         view.stopsColor = color
