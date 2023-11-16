@@ -1,8 +1,11 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
+
 import SwiftUI
 import Observation
+import SwiftUIIntrospect
+
 
 /// Notice:
 /// The minVal and maxVal should be divided by 5 in order for the picker to work correctly.
@@ -13,9 +16,11 @@ public struct CustomHorizontalPicker: View {
     var viewModel = ViewModel()
     
     // MARK: - Internal
+    @State private var initialised: Bool = false
+    @State private var scrolledToStart: Bool = false
+    
     @State private var majorStopsCount: Double = 0
     @State private var scrollPosition: Double?
-    @State private var initialised: Bool = false
     @State private var initialOffset: Double = 0
     @State private var maxOffset: Double = 0
     
@@ -23,7 +28,7 @@ public struct CustomHorizontalPicker: View {
     @Binding public var value: Int?
     public let minVal: Int
     public let maxVal: Int
-    public let startValue: Int = 0
+    public let startValue: Int
     
     // MARK: - Picker
     public var pickerColor: Color = .accentColor
@@ -35,15 +40,20 @@ public struct CustomHorizontalPicker: View {
     public var miniStopsColor: Color = .gray.opacity(0.7)
     public var miniStopsWidth: CGFloat = 2
     
-    public init(value: Binding<Int?>, minVal: Int, maxVal: Int) {
+    public init(value: Binding<Int?>, minVal: Int, maxVal: Int, startValue: Int = 0) {
         self._value = value
         self.minVal = minVal
         self.maxVal = maxVal
+        self.startValue = startValue
     }
     
     public var body: some View {
         ZStack {
 //            Text("\((value ?? 0))")
+//            Button("Scroll") {
+//                scrollPosition = 7
+//            }
+//            .zIndex(2)
             GeometryReader { geometry in
                 ScrollView(.horizontal) {
                     HStack(spacing: 0) {
@@ -62,15 +72,15 @@ public struct CustomHorizontalPicker: View {
                                     }
                         }
                         
-                                PickerStopView(color: self.stopsColor, width: self.stopsWidth)
-                                    .frame(width: 20)
-                                    .offset(x: -10)
-                                    .id(maxVal)
-    
-                                Rectangle()
-                                    .fill(.clear)
-                                    .frame(width: geometry.size.width - 20, height: geometry.size.height)
-                                    .id(maxVal + 1)
+                        PickerStopView(color: self.stopsColor, width: self.stopsWidth)
+                            .frame(width: 20)
+                            .offset(x: -10)
+                            .id(maxVal)
+
+                        Rectangle()
+                            .fill(.clear)
+                            .frame(width: geometry.size.width - 20, height: geometry.size.height)
+                            .id(maxVal + 1)
                     }
                     .background(GeometryReader {
                         Color.clear.preference(key: ViewOffsetKey.self,
@@ -93,9 +103,16 @@ public struct CustomHorizontalPicker: View {
                     .scrollTargetLayout()
                     .offset(x: geometry.size.width / 2)
                 }
+                .introspect(.scrollView, on: .iOS(.v17)) { scrollView in
+                    if !self.scrolledToStart {
+                        scrollView.contentOffset.x = CGFloat(startValue * 20)
+                        self.scrolledToStart = true
+                    }
+                }
                 .coordinateSpace(name: "scroll")
                 .scrollIndicators(.hidden)
                 .scrollTargetBehavior(.viewAligned)
+                .scrollPosition(id: $scrollPosition, anchor: .center)
                 .onAppear {
                     self.majorStopsCount = viewModel.calculateMajorStopsCount(minVal: self.minVal, maxVal: self.maxVal)
                     self.maxOffset = ((majorStopsCount - 10) + (majorStopsCount * 4)) * 20
