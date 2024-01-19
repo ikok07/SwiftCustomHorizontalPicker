@@ -106,9 +106,9 @@ public struct CustomHorizontalPicker: View {
                 }
                 .introspect(.scrollView, on: .iOS(.v17)) { scrollView in
                     if !self.scrolledToStart {
+                        self.scrolledToStart = true
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
                             scrollView.contentOffset.x = CGFloat(CGFloat(startValueOffset) * self.spacing)
-                            self.scrolledToStart = true
                         }
                     }
                 }
