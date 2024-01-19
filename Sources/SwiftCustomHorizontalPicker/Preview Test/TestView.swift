@@ -10,7 +10,7 @@ import SwiftUI
 @available(iOS 17.0.0, *)
 struct TestView: View {
     
-    @State private var value: Int?
+    @Binding var value: Int?
     
     var body: some View {
         VStack {
@@ -19,7 +19,7 @@ struct TestView: View {
                 .fontWeight(.bold)
                 .padding(.bottom)
             
-            CustomHorizontalPicker(value: $value, minVal: 0, maxVal: 100, startValueOffset: 90)
+            CustomHorizontalPicker(value: $value, minVal: 0, maxVal: 100, startValueOffset: value ?? 0)
                 .frame(height: 40)
         }
     }
@@ -27,5 +27,5 @@ struct TestView: View {
 
 @available(iOS 17.0.0, *)
 #Preview {
-    TestView()
+    TestView(value: .constant(40))
 }

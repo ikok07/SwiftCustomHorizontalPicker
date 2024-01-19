@@ -58,7 +58,7 @@ public struct CustomHorizontalPicker: View {
     
     public var body: some View {
         ZStack {
-//            Text("\((value ?? 0))")
+            Text("\((value ?? 0))")
             GeometryReader { geometry in
                 ScrollView(.horizontal) {
                     HStack(spacing: 0) {
@@ -106,8 +106,10 @@ public struct CustomHorizontalPicker: View {
                 }
                 .introspect(.scrollView, on: .iOS(.v17)) { scrollView in
                     if !self.scrolledToStart {
-                        scrollView.contentOffset.x = CGFloat(CGFloat(startValueOffset) * self.spacing)
-                        self.scrolledToStart = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            scrollView.contentOffset.x = CGFloat(CGFloat(startValueOffset) * self.spacing)
+                            self.scrolledToStart = true
+                        }
                     }
                 }
                 .coordinateSpace(name: "scroll")
