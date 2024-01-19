@@ -105,9 +105,11 @@ public struct CustomHorizontalPicker: View {
                     .offset(x: geometry.size.width / 2)
                 }
                 .introspect(.scrollView, on: .iOS(.v17)) { scrollView in
-                    if !self.scrolledToStart && self.initialised {
-                        scrollView.contentOffset.x = CGFloat(CGFloat(startValueOffset) * self.spacing)
-                        self.scrolledToStart = true
+                    if !self.scrolledToStart {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            scrollView.contentOffset.x = CGFloat(CGFloat(startValueOffset) * self.spacing)
+                            self.scrolledToStart = true
+                        }
                     }
                 }
                 .coordinateSpace(name: "scroll")
