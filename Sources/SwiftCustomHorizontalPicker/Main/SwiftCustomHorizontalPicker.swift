@@ -58,7 +58,7 @@ public struct CustomHorizontalPicker: View {
     
     public var body: some View {
         ZStack {
-            Text("\((value ?? 0))")
+//            Text("\((value ?? 0))")
             GeometryReader { geometry in
                 ScrollView(.horizontal) {
                     HStack(spacing: 0) {
