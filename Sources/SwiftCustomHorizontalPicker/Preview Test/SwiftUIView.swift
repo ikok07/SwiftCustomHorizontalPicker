@@ -7,15 +7,15 @@
 
 import SwiftUI
 
-final class Test: ObservableObject {
-    @Published var test: Int? = 95
-}
 
 struct SwiftUIView: View {
-    @StateObject private var viewModel = Test()
+    @State private var value: Int? = 20
     
     var body: some View {
-        TestView(value: $viewModel.test)
+        VStack {
+            Text("\(value! * 10)")
+            TestView(value: $value)
+        }
     }
 }
 

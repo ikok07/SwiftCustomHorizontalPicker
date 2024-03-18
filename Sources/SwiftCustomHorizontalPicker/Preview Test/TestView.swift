@@ -19,7 +19,7 @@ struct TestView: View {
                 .fontWeight(.bold)
                 .padding(.bottom)
             
-            CustomHorizontalPicker(value: $value, minVal: 0, maxVal: 100, startValueOffset: value ?? 0)
+            CustomHorizontalPicker(value: $value, minVal: 10, maxVal: 50, startValueOffset: value ?? 0)
                 .frame(height: 40)
         }
     }
